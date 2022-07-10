@@ -1,3 +1,4 @@
+-- Inserts fake values into departments table
 INSERT INTO departments
     (name)
 VALUES
@@ -6,7 +7,7 @@ VALUES
     ('Customer Service'),
     ('IT');
 
-
+-- Inserts fake values into roles table
 INSERT INTO roles 
     (title, salary, department_id)
 VALUES
@@ -23,6 +24,7 @@ VALUES
     ('IT Director', 100000, 4),
     ('IT Intern', 50000, 4);
 
+-- Inserts fake values into employees table
 INSERT INTO employees
     (first_name, last_name, role_id, manager_id)
 VALUES
