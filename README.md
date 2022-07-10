@@ -4,7 +4,7 @@
 This application provides a Content Management System for a company to interact with its data in the form of departments, roles, and employees.
 
 ## Link to Walkthrough Video
-Insert Link here 
+https://drive.google.com/file/d/1HEIaMd4rDi_Z5gJ5KB8YxRwYQUmN0lvv/view
 
 ## Built With
 - Node.js
