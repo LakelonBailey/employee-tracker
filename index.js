@@ -2,6 +2,8 @@ const db = require('./db/connection.js');
 const inquirer = require('inquirer');
 const table = require('console.table');
 
+
+// Prompts the user to select an action.
 const promptActions = () => {
     return inquirer.prompt([
         {
@@ -32,6 +34,7 @@ const promptActions = () => {
 }
 
 
+// Prompts the user with questions related to the creation of a new department.
 const promptNewDepartment = () => {
     return inquirer.prompt([
         {
@@ -42,6 +45,8 @@ const promptNewDepartment = () => {
     ])
 }
 
+
+// Prompts the user with questions related to the creation of a new role.
 const promptNewRole = (departments) => {
     departmentNames = []
     for (var x of departments) {
@@ -77,6 +82,8 @@ const promptNewRole = (departments) => {
     ])
 }
 
+
+// Prompts the user with questions related to the creation of a new employee.
 const promptNewEmployee = (roles, managers) => {
     let roleTitles = [];
     let managerNames = [];
@@ -130,6 +137,8 @@ const promptNewEmployee = (roles, managers) => {
     ])
 }
 
+
+// Prompts the user to select a employee to update and the role to update that employee with.
 const promptUpdateEmp = (emps, roles) => {
     let empNames = []
     for (let x of emps) {
@@ -158,6 +167,7 @@ const promptUpdateEmp = (emps, roles) => {
 }
 
 
+// Queries the departments table and displays the departments to the user.
 const viewDepartments = () => {
     const sql = 
     `
@@ -174,6 +184,7 @@ const viewDepartments = () => {
 }
 
 
+// Queries the roles table and displays the roles to the user.
 const viewRoles = () => {
     const sql = 
     `
@@ -191,6 +202,8 @@ const viewRoles = () => {
     })
 }
 
+
+// Queries the employees table and displays the employees to the user.
 const viewEmployees = () => {
     const sql = 
     `
@@ -217,6 +230,8 @@ const viewEmployees = () => {
     })
 }
 
+
+// Adds a new department to the database based on the information provided by the user. 
 const addDepartment = () => {
     promptNewDepartment()
     .then(data => {
@@ -225,6 +240,7 @@ const addDepartment = () => {
         INSERT INTO departments (name) VALUES (?)
         `
         const params = [name]
+        // Adds department based on user provided/selected information.
         db.query(sql, params, (err, result) => {
             if (err) {
                 console.log(err);
@@ -236,6 +252,8 @@ const addDepartment = () => {
     })
 }
 
+
+// Adds a new role to the database based on the information provided by the user.
 const addRole = () => {
     const departmentSQL = 
     `
@@ -262,7 +280,12 @@ const addRole = () => {
             `
             INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?)
             `
+            // Adds role based on user provided/selected information.
             db.query(sql, params, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    process.exit();
+                }
                 console.log("New role has been created with the title'" + title + "'")
                 runProgram();
             })
@@ -270,11 +293,14 @@ const addRole = () => {
     })
 }
 
+
+// Adds a new employee to the database based on the information provided by the user.
 const addEmployee = () => {
     const rolesSQL = 
     `
     SELECT * FROM roles
     `
+    // queries the database for all roles
     db.query(rolesSQL, (err, roles) => {
         if (err) {
             console.log(err);
@@ -285,6 +311,7 @@ const addEmployee = () => {
         `
         SELECT * FROM employees WHERE manager_id IS NULL
         `
+        // queries the database for all managers under the assumption that managers do not have a manager.
         db.query(managersSQL, (err, managers) => {
             if (err) {
                 console.log(err);
@@ -321,6 +348,7 @@ const addEmployee = () => {
                 `
                 INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)
                 `
+                // Adds employee based on user provided/selected information.
                 db.query(sql, params, (err, result) => {
                     if (err) {
                         console.log(err);
@@ -343,11 +371,13 @@ const updateEmployee = () => {
     `
     SELECT * FROM roles
     `
+    // queries the database for all employees.
     db.query(employeeSQL, (err, emps) => {
         if (err) {
             console.log(err);
             process.exit();
         }
+        // queries the database for all roles.
         db.query(roleSQl, (err, roles) => {
             if (err) {
                 console.log(err);
@@ -377,7 +407,12 @@ const updateEmployee = () => {
                 `
                 const params = [role_id, id]
 
+                // updates an employee based on the chosen employee and new role.
                 db.query(sql, params, (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        process.exit();
+                    }
                     console.log('Successfully changed ' + data.employee + "'s role")
                     runProgram();
                 })
@@ -386,6 +421,8 @@ const updateEmployee = () => {
     })
 }
 
+
+// Matches user-chosen action to respective function.
 const runProgram = () => {
     promptActions()
     .then(data => {
